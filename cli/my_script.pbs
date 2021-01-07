@@ -1,0 +1,10 @@
+#!/bin/bash
+#PBS -q standard
+#PBS -l select=1:ncpus=10:mem=60gb
+#PBS -N my_job
+#PBS -W group_list=boss
+#PBS -l place=free:shared
+#PBS -l walltime=12:00:00
+
+cd $PBS_O_WORKDIR
+
