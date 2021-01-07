@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""tests for make_pbs_script.py"""
+"""tests for make_slurm_script.py"""
 
 import hashlib
 import os
@@ -10,7 +10,7 @@ import string
 import glob
 from subprocess import getstatusoutput
 
-prg = '../make_pbs_script.py'
+prg = '../make_slurm_script.py'
 pi_name = 'my_boss'
 out_msg = "Script generator complete"
 default_script_name = 'my_script'
@@ -50,14 +50,14 @@ def test_pi_default_args():
     rv, out = getstatusoutput(f'{prg} {pi_name}')
     assert rv == 0
     assert re.findall(out_msg, out)
-    assert os.path.exists("my_script.pbs")
+    assert os.path.exists("my_script.slurm")
 
 
 # --------------------------------------------------
 def test_shebang():
     """Test first line of script is #! (shebang)"""
 
-    script_string = open(default_script_name+'.pbs').read()
+    script_string = open(default_script_name+'.slurm').read()
     assert script_string.startswith("#!")
 
 
@@ -70,7 +70,7 @@ def test_script_body_correctly_replaced():
     assert rv == 0
     assert re.findall(out_msg, out)
 
-    output_script = open(default_script_name+'.pbs').read()
+    output_script = open(default_script_name+'.slurm').read()
     handles = ["NODES", "MEMORY"] # testing two handles is enough
 
     for h in handles:
@@ -79,11 +79,11 @@ def test_script_body_correctly_replaced():
 
 
 # --------------------------------------------------
-def test_find_pbs():
-    """Find #PBS in the output"""
+def test_find_sbatch():
+    """Find #SBATCH in the output"""
 
-    output_script = open(default_script_name+'.pbs').read()
+    output_script = open(default_script_name+'.slurm').read()
 
-    assert re.findall("#PBS ", output_script)
+    assert re.findall("#SBATCH ", output_script)
 
 # --------------------------------------------------

@@ -1,28 +1,21 @@
 #!/usr/bin/env python
-
 """
 Author : Nathalia Graf-Grachet
-Date   : 2020-08-29
-Purpose: SLURM script generator
+Date   : 2020-12-11
+Purpose: Interactive job generator Puma
 """
 
 import argparse
 import os
-
 
 # --------------------------------------------------
 def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description="Basic SLURM script for Puma",
+        description="Basic interactive SLURM script for Puma",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
-
-    parser.add_argument('-s', '--script_name',
-                        metavar='str',
-                        help='Script filename, e.g., my_script, so filename will be my_script.slurm',
-                        default="my_script")
 
     parser.add_argument('-n', '--nodes',
                         metavar='str',
@@ -54,12 +47,6 @@ def get_args():
                         type=str,
                         default="12:00:00")
 
-    parser.add_argument('-e', '--email',
-                        help='Optional, your netid@email.arizona.edu, BEGIN|END|ABNORMAL',
-                        metavar='e-mail',
-                        type=str,
-                        default=None)
-
     parser.add_argument('positional',
                         help="Your PI name",
                         metavar='PI name',
@@ -68,25 +55,21 @@ def get_args():
 
     args = parser.parse_args()
 
+
     return args
 
 
 # --------------------------------------------------
 def main():
-    """SLURM script generator"""
+    """Interactive SLURM script generator"""
 
     args = get_args()
-    # print(args)
-    script_body = "#!/bin/bash\n#SBATCH --job-name=JOBNAME\n#SBATCH --nodes=NODES\n#SBATCH --mem=MEMORYgb\n#SBATCH --time=WALLTIME\n#SBATCH --partition=QUEUE\n#SBATCH --account=PI\n"
 
-    if args.email:
-        script_body+= "#SBATCH --mail-type=ALL\n#SBATCH --mail-user=EMAIL\n"
+    script_body = """srun --nodes=NODES --ntasks=CORES --ntasks-per-node=CORES --mem-per-cpu=MEMORYGb --time=WALLTIME --job-name=JOBNAME --account=QUEUE --pty bash -i\n"""
 
     script_body_replaced = replace_handles(script_body, args)
-    # print(script_body_replaced)
 
-    with open(args.script_name+".slurm", 'w') as out:
-            out.write(script_body_replaced+'\n')
+    print(script_body_replaced)
 
     print('Script generator complete.')
 
@@ -102,9 +85,6 @@ def replace_handles(script_body, args):
                   ("JOBNAME", args.jobName),
                   ("WALLTIME", args.walltime),
                   ("PI", args.positional)]
-
-    if args.email:
-        to_replace.append(("EMAIL", args.email))
 
     for op in to_replace:
             script_body = script_body.replace(op[0], op[1])

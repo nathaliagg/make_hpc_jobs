@@ -14,7 +14,7 @@ def get_args():
     """Get command-line arguments"""
 
     parser = argparse.ArgumentParser(
-        description="Basic PBS script for standard queue in Ocelote",
+        description="Basic PBS script for Ocelote",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
 
@@ -72,7 +72,7 @@ def get_args():
 
 # --------------------------------------------------
 def main():
-    """PBS script generator for Tfaily Lab"""
+    """PBS script generator"""
 
     args = get_args()
     # print(args)
@@ -90,7 +90,7 @@ def main():
     with open(args.script_name+".pbs", 'w') as out:
         out.write(script_body_replaced+'\n')
 
-    print('PBS script complete.')
+    print('Script generator complete.')
 
 
 # --------------------------------------------------

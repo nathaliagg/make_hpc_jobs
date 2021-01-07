@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""tests for make_pbs_script.py"""
+"""tests for make_intjob_slurm.py"""
 
 import hashlib
 import os
@@ -10,10 +10,9 @@ import string
 import glob
 from subprocess import getstatusoutput
 
-prg = '../make_pbs_script.py'
-pi_name = 'my_boss'
+prg = '../make_intjob_slurm.py'
+pi_name = 'boss'
 out_msg = "Script generator complete"
-default_script_name = 'my_script'
 
 
 # --------------------------------------------------
@@ -50,40 +49,15 @@ def test_pi_default_args():
     rv, out = getstatusoutput(f'{prg} {pi_name}')
     assert rv == 0
     assert re.findall(out_msg, out)
-    assert os.path.exists("my_script.pbs")
 
 
 # --------------------------------------------------
-def test_shebang():
-    """Test first line of script is #! (shebang)"""
-
-    script_string = open(default_script_name+'.pbs').read()
-    assert script_string.startswith("#!")
-
-
-# --------------------------------------------------
-def test_script_body_correctly_replaced():
-    """Test if the handles in the script body
-        was correctly replaced in output"""
+def test_qsub():
+    """Test first line of script is srun"""
 
     rv, out = getstatusoutput(f'{prg} {pi_name}')
     assert rv == 0
-    assert re.findall(out_msg, out)
+    assert re.findall("srun ", out)
 
-    output_script = open(default_script_name+'.pbs').read()
-    handles = ["NODES", "MEMORY"] # testing two handles is enough
-
-    for h in handles:
-        result_search = re.findall(h, output_script)
-        assert result_search == []
-
-
-# --------------------------------------------------
-def test_find_pbs():
-    """Find #PBS in the output"""
-
-    output_script = open(default_script_name+'.pbs').read()
-
-    assert re.findall("#PBS ", output_script)
 
 # --------------------------------------------------
