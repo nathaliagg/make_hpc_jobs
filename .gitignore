@@ -1,7 +1,9 @@
 .DS_Store
 *.DS_Store
 
+my_script.pbs
 *my_script.pbs
+my_script.slurm
 *my_script.slurm
 
 ## Source: https://raw.githubusercontent.com/github/gitignore/master/Python.gitignore
